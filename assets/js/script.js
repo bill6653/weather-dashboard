@@ -47,7 +47,7 @@ function currentWeather(city) {
         //parse the response for name of city
         $(currentCity).html(response.name +"("+date+")" + "<img src="+iconURL+">");
         
-        // Convert the temp to fahrenheit
+        // Convert the temperature to fahrenheit
         var tempF = (response.main.temp - 273.15) * 1.80 + 32;
         $(currentTemperature).html((tempF).toFixed(2) + "&#8457");
         // Display the Humidity
@@ -77,5 +77,30 @@ function currentWeather(city) {
             }
         }
 
+    });
+}
+// function to display the 5-day forecast for the current city.
+function forecast(cityid){
+    var dayover= false;
+    var queryforcastURL="https://api.openweathermap.org/data/2.5/forecast?id="+cityid+"&appid="+APIKey;
+    $.ajax({
+        url:queryforcastURL,
+        method:"GET"
+    }).then(function(response){
+        
+        for (i=0;i<5;i++){
+            var date= new Date((response.list[((i+1)*8)-1].dt)*1000).toLocaleDateString();
+            var iconcode= response.list[((i+1)*8)-1].weather[0].icon;
+            var iconurl="https://openweathermap.org/img/wn/"+iconcode+".png";
+            var tempK= response.list[((i+1)*8)-1].main.temp;
+            var tempF=(((tempK-273.5)*1.80)+32).toFixed(2);
+            var humidity= response.list[((i+1)*8)-1].main.humidity;
+        
+            $("#fDate"+i).html(date);
+            $("#fImg"+i).html("<img src="+iconurl+">");
+            $("#fTemp"+i).html(tempF+"&#8457");
+            $("#fHumidity"+i).html(humidity+"%");
+        }
+        
     });
 }
